@@ -16,5 +16,10 @@ spec:
     spec:
       containers:
       - name: "goserver"
-        image: "rossini1408/hello-go:latest"
+        image: "rossini1408/hello-go:v2"
+        env:
+          - name: NAME
+            value: "Rossini"
+          - name: AGE 
+            value: "29"
         

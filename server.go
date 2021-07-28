@@ -3,11 +3,13 @@ package main
 import (
     "fmt"
     "net/http"
+    "os"
 )
 
 func hello(w http.ResponseWriter, req *http.Request) {
-
-    fmt.Fprintf(w, "<h1>hello</h1>\n")
+    name := os.Getenv("NAME")
+    age := os.Getenv("AGE")
+    fmt.Fprintf(w, "<h1>hello I am %s  and  I am %s</h1>\n", name, age)
 }
 
 func headers(w http.ResponseWriter, req *http.Request) {
@@ -24,5 +26,5 @@ func main() {
     http.HandleFunc("/hello", hello)
     http.HandleFunc("/headers", headers)
 
-    http.ListenAndServe(":8090", nil)
+    http.ListenAndServe(":8000", nil)
 }
