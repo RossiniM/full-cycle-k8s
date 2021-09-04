@@ -1,30 +1,39 @@
 package main
 
 import (
-    "fmt"
-    "net/http"
-    "os"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"os"
+	"time"
 )
 
-func hello(w http.ResponseWriter, req *http.Request) {
-    name := os.Getenv("NAME")
-    age := os.Getenv("AGE")
-    fmt.Fprintf(w, "<h1>hello I am %s  and  I am %s</h1>\n", name, age)
-}
-
-func headers(w http.ResponseWriter, req *http.Request) {
-
-    for name, headers := range req.Header {
-        for _, h := range headers {
-            fmt.Fprintf(w, "%v: %v\n", name, h)
-        }
-    }
-}
+var startedAt = time.Now()
 
 func main() {
+	http.HandleFunc("/secret", Secret)
+	http.HandleFunc("/configmap", ConfigMap)
+	http.HandleFunc("/", Hello)
+	http.ListenAndServe(":8000", nil)
+}
 
-    http.HandleFunc("/hello", hello)
-    http.HandleFunc("/headers", headers)
+func Hello(w http.ResponseWriter, r *http.Request) {
+	name := os.Getenv("NAME")
+	age := os.Getenv("AGE")
+	fmt.Fprintf(w, "Hello, I'm %s. I'm %s.", name, age)
+}
 
-    http.ListenAndServe(":8000", nil)
+func Secret(w http.ResponseWriter, r *http.Request) {
+	user := os.Getenv("USER")
+	password := os.Getenv("PASSWORD")
+	fmt.Fprintf(w, "User: %s. Password: %s", user, password)
+}
+
+func ConfigMap(w http.ResponseWriter, r *http.Request) {
+	data, err := ioutil.ReadFile("/go/myfamily/family.txt")
+	if err != nil {
+		log.Fatalf("Error reading file: ", err)
+	}
+	fmt.Fprintf(w, "My Family: %s.", string(data))
 }

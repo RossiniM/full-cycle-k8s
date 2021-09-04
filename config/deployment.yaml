@@ -16,9 +16,29 @@ spec:
     spec:
       containers:
       - name: "goserver"
-        image: "rossini1408/hello-go:v2"
+        image: "rossini1408/hello-go:v5"
+
+        resources:
+            requests: 
+              cpu: "0.05"
+              memory: 20Mi
+            limits:
+              cpu: "0.05"
+              memory: 25Mi
+
         envFrom:
           - configMapRef:
               name: goserver-env
-     
-        
+          - secretRef:
+              name: goserver-secret
+        volumeMounts:
+          - mountPath: "/go/myfamily"
+            name: config
+      
+      volumes:
+        - name: config 
+          configMap:
+            name: configmap-family
+            items:
+            - key: members
+              path: "family.txt"
