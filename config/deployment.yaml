@@ -8,7 +8,7 @@ spec:
   selector:
     matchLabels:
       app: goserver
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -16,7 +16,29 @@ spec:
     spec:
       containers:
       - name: "goserver"
-        image: "rossini1408/hello-go:v5"
+        image: "rossini1408/hello-go:v5.1"
+
+        startupProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+          periodSeconds: 3
+          failureThreshold: 30
+          
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+          periodSeconds: 3
+          failureThreshold: 1
+        
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8000
+          periodSeconds: 5
+          failureThreshold: 2
+          initialDelaySeconds: 5
 
         resources:
             requests: 
